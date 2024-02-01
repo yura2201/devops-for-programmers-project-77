@@ -10,7 +10,7 @@ terraform {
       s3 = "https://storage.yandexcloud.net"
     }
     region = "ru-central1"
-    key    = "hexlet-remote-state-repo"
+    key    = "hexlet/terraform.tfstate"
 
     skip_region_validation      = true
     skip_credentials_validation = true
