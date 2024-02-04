@@ -69,27 +69,27 @@ resource "yandex_compute_instance" "web-1" {
     host        = self.network_interface[0].nat_ip_address
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      <<EOT
-sudo docker run -d -p 0.0.0.0:80:3000 \
-  -e DB_TYPE=postgres \
-  -e DB_NAME=${module.yandex-postgresql.databases[0]} \
-  -e DB_HOST=${module.yandex-postgresql.cluster_fqdns_list[0].0} \
-  -e DB_PORT=6432 \
-  -e DB_USER=${module.yandex-postgresql.owners_data[0].user} \
-  -e DB_PASS=${module.yandex-postgresql.owners_data[0].password} \
-  ghcr.io/requarks/wiki:2.5
-EOT
-    ]
-  }
-  #  provisioner "remote-exec" {
-  #    inline = [
-  #      <<EOT
-  #echo test
-  #EOT
-  #    ]
-  #  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      <<EOT
+#sudo docker run -d -p 0.0.0.0:80:3000 \
+#  -e DB_TYPE=postgres \
+#  -e DB_NAME=${module.yandex-postgresql.databases[0]} \
+#  -e DB_HOST=${module.yandex-postgresql.cluster_fqdns_list[0].0} \
+#  -e DB_PORT=6432 \
+#  -e DB_USER=${module.yandex-postgresql.owners_data[0].user} \
+#  -e DB_PASS=${module.yandex-postgresql.owners_data[0].password} \
+#  ghcr.io/requarks/wiki:2.5
+#EOT
+#    ]
+#  }
+    provisioner "remote-exec" {
+      inline = [
+        <<EOT
+  echo test
+  EOT
+      ]
+    }
 
   depends_on = [module.yandex-postgresql]
 }
@@ -133,27 +133,27 @@ resource "yandex_compute_instance" "web-2" {
     host        = self.network_interface[0].nat_ip_address
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      <<EOT
-sudo docker run -d -p 0.0.0.0:80:3000 \
-  -e DB_TYPE=postgres \
-  -e DB_NAME=${module.yandex-postgresql.databases[0]} \
-  -e DB_HOST=${module.yandex-postgresql.cluster_fqdns_list[0].0} \
-  -e DB_PORT=6432 \
-  -e DB_USER=${module.yandex-postgresql.owners_data[0].user} \
-  -e DB_PASS=${module.yandex-postgresql.owners_data[0].password} \
-  ghcr.io/requarks/wiki:2.5
-EOT
-    ]
-  }
-  #  provisioner "remote-exec" {
-  #    inline = [
-  #      <<EOT
-  #echo test
-  #EOT
-  #    ]
-  #  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      <<EOT
+#sudo docker run -d -p 0.0.0.0:80:3000 \
+#  -e DB_TYPE=postgres \
+#  -e DB_NAME=${module.yandex-postgresql.databases[0]} \
+#  -e DB_HOST=${module.yandex-postgresql.cluster_fqdns_list[0].0} \
+#  -e DB_PORT=6432 \
+#  -e DB_USER=${module.yandex-postgresql.owners_data[0].user} \
+#  -e DB_PASS=${module.yandex-postgresql.owners_data[0].password} \
+#  ghcr.io/requarks/wiki:2.5
+#EOT
+#    ]
+#  }
+    provisioner "remote-exec" {
+      inline = [
+        <<EOT
+  echo test
+  EOT
+      ]
+    }
 
   depends_on = [module.yandex-postgresql]
 }
@@ -289,6 +289,7 @@ module "yandex-postgresql" {
     {
       name       = "hexlet"
       owner      = var.db_user
+      password   = var.db_password
       lc_collate = "ru_RU.UTF-8"
       lc_type    = "ru_RU.UTF-8"
       extensions = ["uuid-ossp", "xml2"]
@@ -296,6 +297,7 @@ module "yandex-postgresql" {
     {
       name       = "hexlet-test"
       owner      = var.db_user
+      password   = var.db_password
       lc_collate = "ru_RU.UTF-8"
       lc_type    = "ru_RU.UTF-8"
       extensions = ["uuid-ossp", "xml2"]
@@ -305,6 +307,7 @@ module "yandex-postgresql" {
   owners = [
     {
       name       = var.db_user
+      password   = var.db_password
       conn_limit = 15
     }
   ]
@@ -336,4 +339,8 @@ output "external_ip_address_vm_1" {
 
 output "external_ip_address_vm_2" {
   value = yandex_compute_instance.web-2.network_interface.0.nat_ip_address
+}
+
+output "database_fqdn" {
+  value = module.yandex-postgresql.cluster_fqdns_list[0].0
 }

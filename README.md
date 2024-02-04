@@ -53,7 +53,22 @@ provider_installation {
 `tr-validate` - проверка корректности кода проекта <br>
 `tr-plan` - построение плана выполнения заданий terraform <br>
 `tr-apply` - запуск выполнения заданий terraform по созданию инфраструктуры <br>
-`tr-destroy` - удаление ранее созданной инфраструктуры
+`tr-destroy` - удаление ранее созданной инфраструктуры <br>
+`app-setup` - предварительная настройка приложения: <br>
+- установка ролей и коллекций Ansible (если выполнялось ранее, то пропустим без ошибок)
+- установка Docker и docker-compose на удаленные сервера, добавление пользователей `docker_group_users` в группу `docker` (если на удаленном сервере они не установлены)
+- установка необходимых пакетов python на удаленные сервера
+- добавление пользователя `ansible_ssh_user` в группу `sudo`
+- установка postrges клиента <br>
+
+`app-deploy` - деплой приложения на удаленные машины
+
+### Приложение
+http://yurait6.ru/
+
+[Документация Redmine](https://www.redmine.org/guide)
+
+[Docker](https://hub.docker.com/_/redmine)
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/yura2201/devops-for-programmers-project-77/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/yura2201/devops-for-programmers-project-77/actions)

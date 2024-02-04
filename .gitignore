@@ -1,3 +1,4 @@
 **/secrets*
 /.idea/
 .terraform*
+/ansible/group_vars/webservers/vault

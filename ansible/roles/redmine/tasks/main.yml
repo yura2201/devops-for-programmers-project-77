@@ -1,0 +1,23 @@
+---
+- name: Create Dest env directory
+  ansible.builtin.file:
+    path: "{{ env_file_location }}"
+    state: directory
+    recurse: yes
+
+- name: Templating and copy .env file
+  ansible.builtin.template:
+    src: .env.j2
+    mode: '644'
+    dest: "{{ env_file_location }}/.env"
+
+- name: Deploy Redmine
+  docker_container:
+    name: stud-redmine
+    image: "redmine:5.0.7-alpine3.18"
+    restart_policy: always
+    state: started
+    ports:
+      - "{{ app_port }}:{{ container_port }}"
+    env_file: "{{ env_file_location }}/.env"
+

@@ -1,0 +1,10 @@
+---
+
+all:
+  children:
+    webservers:
+      hosts:
+        web1:
+          ansible_host: yandex-student
+        web2:
+          ansible_host: yandex-student-2

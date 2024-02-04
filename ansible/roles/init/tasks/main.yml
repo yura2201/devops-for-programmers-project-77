@@ -1,0 +1,28 @@
+---
+- name: Get all groups
+  ansible.builtin.getent:
+    database: group
+
+- name: Add "{{ ansible_ssh_user }}" to sudo
+  ansible.builtin.user:
+    name: "{{ ansible_ssh_user }}"
+    groups: "{{ item }}"
+    append: yes
+    create_home: false
+  when: item in ansible_facts.getent_group
+  with_items:
+    - sudo
+
+- name: Check if DB cert exists
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_ssh_user }}/.postgresql/root.crt"
+  register: stat_result
+
+- name: Create DB Cert if not exist
+  ansible.builtin.command: "{{ item }}"
+  with_items:
+    - "mkdir -p /home/{{ ansible_ssh_user }}/.postgresql"
+    - "wget \"https://storage.yandexcloud.net/cloud-certs/CA.pem\" --output-document /home/{{ ansible_ssh_user }}/.postgresql/root.crt"
+    - "chown {{ ansible_ssh_user }}:{{ ansible_ssh_user }} /home/{{ ansible_ssh_user }}/.postgresql/root.crt"
+    - "chmod 0600 /home/{{ ansible_ssh_user }}/.postgresql/root.crt"
+  when: not stat_result.stat.exists

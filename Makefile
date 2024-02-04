@@ -12,6 +12,11 @@ tr-format:
 	terraform -chdir=./terraform/ fmt
 tr-validate:
 	terraform -chdir=./terraform/ validate
+app-deploy:
+	ansible-playbook ansible/playbook.yml -i ansible/inventory.yml -vvv -u yurait6 --vault-password-file ~/.local/bin/ansible-vault-data/vault-pass.txt
+app-setup:
+	ansible-galaxy install -r ./ansible/requirements.yml
+	ansible-playbook ansible/setup.yml -i ansible/inventory.yml -vv -u yurait6 --vault-password-file ~/.local/bin/ansible-vault-data/vault-pass.txt
 
 
 

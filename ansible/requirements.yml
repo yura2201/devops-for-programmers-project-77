@@ -1,0 +1,9 @@
+---
+collections:
+  - community.docker
+  - datadog.dd
+
+roles:
+  - name: geerlingguy.pip
+  - name: geerlingguy.docker
+  - name: ome.postgresql_client

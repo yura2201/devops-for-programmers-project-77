@@ -1,0 +1,7 @@
+---
+ansible_ssh_user: yurait6
+docker_edition: 'ce'
+docker_compose_plugin_version: "1.29.2"
+docker_group_users: ['yurait6']
+app_port: 80
+container_port: 3000

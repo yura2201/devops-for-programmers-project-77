@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - role: init
+    - role: geerlingguy.docker
+    - role: geerlingguy.pip
+    - role: ome.postgresql_client
+      postgresql_version: "15"
+
+  vars:
+    docker_packages:
+      - "docker-{{ docker_edition }}"
+      - "docker-{{ docker_edition }}-cli"
+      - "docker-{{ docker_edition }}-rootless-extras"
+    docker_packages_state: present
+
+    docker_service_manage: true
+    docker_service_state: started
+    docker_service_enabled: true
+    docker_restart_handler_state: restarted
+
+    # ставим старый docker-compose
+    docker_install_compose: true
+    docker_compose_version: "{{ docker_compose_plugin_version }}"
+    docker_compose_arch: "{{ ansible_architecture }}"
+    # новый пакет тоже ставим
+    docker_compose_package_state: present
+
+    docker_users: "{{ docker_group_users }}"
