@@ -29,8 +29,8 @@ variable "db_user" {
 }
 
 variable "db_password" {
-  type      = string
-#  sensitive = true
+  type = string
+  #  sensitive = true
 }
 
 variable "https_cert_id" {
