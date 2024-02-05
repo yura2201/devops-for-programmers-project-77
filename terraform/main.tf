@@ -379,3 +379,32 @@ output "database_fqdn" {
 output "alb_external_address" {
   value = local.alb_external_ip_adresses[0].address
 }
+
+###################
+## Configure the Datadog
+provider "datadog" {
+  api_key = var.datadog_api_key
+  app_key = var.datadog_app_key
+  api_url = "https://api.datadoghq.eu/"
+}
+
+resource "datadog_monitor" "host_is_up" {
+  name = "host is up"
+  type = "service check"
+  message = "Monitor triggered"
+  escalation_message = "Escalation message"
+
+  query = "\"http.can_connect\".over(\"*\").by(\"url\").last(4).count_by_status()"
+
+  monitor_thresholds {
+    ok = 0
+    warning = 1
+    critical = 2
+  }
+
+  notify_no_data = true
+  renotify_interval = 60
+
+  notify_audit = true
+  timeout_h = 1
+}

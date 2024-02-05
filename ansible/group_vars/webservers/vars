@@ -9,10 +9,14 @@ env_file_location: "{{ vault_env_file_location }}"
 datadog_api_key_value: "{{ vault_datadog_api_key_value }}"
 datadog_api_key: "{{ datadog_api_key_value }}"
 datadog_site: datadoghq.eu
+datadog_config:
+  process_agent_enabled: true
 datadog_checks:
-  redmine:
+  http_check:
     init_config:
-      instances:
-        - name: Hexlet Redmine
-          url: http://yurait6.ru
-          check_certificate_expiration: false
+    instances:
+      - name: HexletRedmine
+        url: http://localhost
+        timeout: 1
+        check_certificate_expiration: false
+        method: GET

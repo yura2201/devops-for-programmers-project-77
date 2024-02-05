@@ -3,6 +3,9 @@ terraform {
     yandex = {
       source = "yandex-cloud/yandex"
     }
+    datadog = {
+      source = "DataDog/datadog"
+    }
   }
 
   backend "s3" {
