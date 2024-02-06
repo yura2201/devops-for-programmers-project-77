@@ -64,7 +64,7 @@ provider_installation {
 `app-deploy` - деплой приложения на удаленные машины
 
 ### Приложение
-http://yurait6.ru/
+http://www.yurait6.ru/
 
 [Документация Redmine](https://www.redmine.org/guide)
 

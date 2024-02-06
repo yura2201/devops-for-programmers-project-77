@@ -55,3 +55,7 @@ variable "ssh_key_path" {
 variable "ssh_private_key_path" {
   type = string
 }
+
+variable "datadog_url" {
+  type = string
+}

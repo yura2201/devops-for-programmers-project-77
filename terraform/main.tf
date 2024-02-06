@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     yandex = {
-      version = ">= 0.103"
+      version = ">= 0.83"
       source  = "yandex-cloud/yandex"
     }
     datadog = {
@@ -395,12 +395,6 @@ output "alb_external_address" {
 
 ###################
 ## Configure the Datadog
-provider "datadog" {
-  api_key = var.datadog_api_key
-  app_key = var.datadog_app_key
-  api_url = "https://api.datadoghq.eu/"
-}
-
 resource "datadog_monitor" "host_is_up" {
   name               = "host is up"
   type               = "service check"
