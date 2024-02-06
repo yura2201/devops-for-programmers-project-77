@@ -12,10 +12,10 @@ variable "folder_id" {
 }
 
 variable "yc_zone" {
-  type      = string
+  type = string
 }
 variable "os_image" {
-  type      = string
+  type = string
 }
 
 variable "yc_user" {

@@ -13,10 +13,10 @@ terraform {
 
 # https://cloud.yandex.com/ru/docs/compute/concepts/disk
 resource "yandex_compute_disk" "boot-disk" {
-  for_each  = toset(var.servers)
-  name = "disk-${each.value}"
-  type = var.disk-type
-  zone = var.yc_zone
+  for_each = toset(var.servers)
+  name     = "disk-${each.value}"
+  type     = var.disk-type
+  zone     = var.yc_zone
   # GiB
   size = var.disk-size
   # yc compute image list --folder-id standard-images
@@ -35,8 +35,8 @@ resource "yandex_vpc_subnet" "subnet-1" {
 }
 
 resource "yandex_compute_instance" "web" {
-  for_each = {for n, idx in var.servers : idx => index(var.servers, idx)}
-  name = "yandex-student-${each.key}"
+  for_each = { for n, idx in var.servers : idx => index(var.servers, idx) }
+  name     = "yandex-student-${each.key}"
   # https://cloud.yandex.ru/ru/docs/compute/concepts/vm-platforms
   platform_id = "standard-v1"
   zone        = var.yc_zone
@@ -105,8 +105,8 @@ resource "yandex_alb_target_group" "target-group" {
   dynamic "target" {
     for_each = { for ip, web in yandex_compute_instance.web : ip => web.network_interface.0.ip_address }
     content {
-        subnet_id   = yandex_vpc_subnet.subnet-1.id
-        ip_address  = target.value
+      subnet_id  = yandex_vpc_subnet.subnet-1.id
+      ip_address = target.value
     }
   }
 }
