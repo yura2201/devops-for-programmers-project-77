@@ -47,3 +47,11 @@ variable "datadog_app_key" {
   type      = string
   sensitive = true
 }
+
+variable "ssh_key_path" {
+  type = string
+}
+
+variable "ssh_private_key_path" {
+  type = string
+}

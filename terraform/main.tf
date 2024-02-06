@@ -72,13 +72,13 @@ resource "yandex_compute_instance" "web-1" {
   }
 
   metadata = {
-    user-data = "#cloud-config\nusers:\n  - name: ${var.yc_user}\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file("~/.ssh/id/yandex/cloud/id_student.pub")}"
+    user-data = "#cloud-config\nusers:\n  - name: ${var.yc_user}\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file(var.ssh_key_path)}"
   }
 
   connection {
     type        = "ssh"
     user        = var.yc_user
-    private_key = file("~/.ssh/id/yandex/cloud/id_student")
+    private_key = file(var.ssh_private_key_path)
     host        = self.network_interface[0].nat_ip_address
   }
 
@@ -136,13 +136,13 @@ resource "yandex_compute_instance" "web-2" {
   }
 
   metadata = {
-    user-data = "#cloud-config\nusers:\n  - name: ${var.yc_user}\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file("~/.ssh/id/yandex/cloud/id_student_2.pub")}"
+    user-data = "#cloud-config\nusers:\n  - name: ${var.yc_user}\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file(var.ssh_key_path)}"
   }
 
   connection {
     type        = "ssh"
     user        = var.yc_user
-    private_key = file("~/.ssh/id/yandex/cloud/id_student_2")
+    private_key = file(var.ssh_private_key_path)
     host        = self.network_interface[0].nat_ip_address
   }
 
