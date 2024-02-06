@@ -1,10 +1,12 @@
 terraform {
   required_providers {
     yandex = {
-      source = "yandex-cloud/yandex"
+      version = ">= 0.103"
+      source  = "yandex-cloud/yandex"
     }
     datadog = {
-      source = "DataDog/datadog"
+      version = ">= 3.35.0"
+      source  = "DataDog/datadog"
     }
   }
 

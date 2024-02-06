@@ -389,22 +389,22 @@ provider "datadog" {
 }
 
 resource "datadog_monitor" "host_is_up" {
-  name = "host is up"
-  type = "service check"
-  message = "Monitor triggered"
+  name               = "host is up"
+  type               = "service check"
+  message            = "Monitor triggered"
   escalation_message = "Escalation message"
 
   query = "\"http.can_connect\".over(\"*\").by(\"url\").last(4).count_by_status()"
 
   monitor_thresholds {
-    ok = 0
-    warning = 1
+    ok       = 0
+    warning  = 1
     critical = 2
   }
 
-  notify_no_data = true
+  notify_no_data    = true
   renotify_interval = 60
 
   notify_audit = true
-  timeout_h = 1
+  timeout_h    = 1
 }
