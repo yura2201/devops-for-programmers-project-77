@@ -11,8 +11,12 @@ variable "folder_id" {
   sensitive = true
 }
 
-variable "yc_zone" {}
-variable "os_image" {}
+variable "yc_zone" {
+  type      = string
+}
+variable "os_image" {
+  type      = string
+}
 
 variable "yc_user" {
   type      = string
