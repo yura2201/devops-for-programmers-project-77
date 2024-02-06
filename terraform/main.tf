@@ -12,22 +12,13 @@ terraform {
 }
 
 # https://cloud.yandex.com/ru/docs/compute/concepts/disk
-resource "yandex_compute_disk" "boot-disk-1" {
-  name = "disk-1"
-  type = "network-hdd"
+resource "yandex_compute_disk" "boot-disk" {
+  for_each  = toset(var.servers)
+  name = "disk-${each.value}"
+  type = var.disk-type
   zone = var.yc_zone
   # GiB
-  size = "30"
-  # yc compute image list --folder-id standard-images
-  image_id = var.os_image
-}
-
-resource "yandex_compute_disk" "boot-disk-2" {
-  name = "disk-2"
-  type = "network-hdd"
-  zone = var.yc_zone
-  # GiB
-  size = "30"
+  size = var.disk-size
   # yc compute image list --folder-id standard-images
   image_id = var.os_image
 }
@@ -43,8 +34,9 @@ resource "yandex_vpc_subnet" "subnet-1" {
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
-resource "yandex_compute_instance" "web-1" {
-  name = "yandex-student"
+resource "yandex_compute_instance" "web" {
+  for_each = {for n, idx in var.servers : idx => index(var.servers, idx)}
+  name = "yandex-student-${each.key}"
   # https://cloud.yandex.ru/ru/docs/compute/concepts/vm-platforms
   platform_id = "standard-v1"
   zone        = var.yc_zone
@@ -58,71 +50,7 @@ resource "yandex_compute_instance" "web-1" {
   }
 
   boot_disk {
-    disk_id = yandex_compute_disk.boot-disk-1.id
-  }
-
-  network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-1.id
-    nat       = true
-  }
-
-  # прерываемая
-  scheduling_policy {
-    preemptible = true
-  }
-
-  metadata = {
-    user-data = "#cloud-config\nusers:\n  - name: ${var.yc_user}\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file(var.ssh_key_path)}"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = var.yc_user
-    private_key = file(var.ssh_private_key_path)
-    host        = self.network_interface[0].nat_ip_address
-  }
-
-  #  provisioner "remote-exec" {
-  #    inline = [
-  #      <<EOT
-  #sudo docker run -d -p 0.0.0.0:80:3000 \
-  #  -e DB_TYPE=postgres \
-  #  -e DB_NAME=${module.yandex-postgresql.databases[0]} \
-  #  -e DB_HOST=${module.yandex-postgresql.cluster_fqdns_list[0].0} \
-  #  -e DB_PORT=6432 \
-  #  -e DB_USER=${module.yandex-postgresql.owners_data[0].user} \
-  #  -e DB_PASS=${module.yandex-postgresql.owners_data[0].password} \
-  #  ghcr.io/requarks/wiki:2.5
-  #EOT
-  #    ]
-  #  }
-  provisioner "remote-exec" {
-    inline = [
-      <<EOT
-  echo test
-  EOT
-    ]
-  }
-
-  depends_on = [module.yandex-postgresql]
-}
-
-resource "yandex_compute_instance" "web-2" {
-  name = "yandex-student-2"
-  # https://cloud.yandex.ru/ru/docs/compute/concepts/vm-platforms
-  platform_id = "standard-v1"
-  zone        = var.yc_zone
-
-  resources {
-    # Гарантированная доля vCPU, %
-    core_fraction = 5
-    cores         = 2
-    # GiB
-    memory = 2
-  }
-
-  boot_disk {
-    disk_id = yandex_compute_disk.boot-disk-2.id
+    disk_id = yandex_compute_disk.boot-disk[each.key].id
   }
 
   network_interface {
@@ -174,14 +102,12 @@ resource "yandex_compute_instance" "web-2" {
 resource "yandex_alb_target_group" "target-group" {
   name = "yandex-student-target-group"
 
-  target {
-    subnet_id  = yandex_vpc_subnet.subnet-1.id
-    ip_address = yandex_compute_instance.web-1.network_interface.0.ip_address
-  }
-
-  target {
-    subnet_id  = yandex_vpc_subnet.subnet-1.id
-    ip_address = yandex_compute_instance.web-2.network_interface.0.ip_address
+  dynamic "target" {
+    for_each = { for ip, web in yandex_compute_instance.web : ip => web.network_interface.0.ip_address }
+    content {
+        subnet_id   = yandex_vpc_subnet.subnet-1.id
+        ip_address  = target.value
+    }
   }
 }
 
@@ -369,20 +295,16 @@ module "yandex-postgresql" {
   ]
 }
 
-output "internal_ip_address_vm_1" {
-  value = yandex_compute_instance.web-1.network_interface.0.ip_address
+output "internal_ip_address_vm" {
+  value = {
+    for ip, web in yandex_compute_instance.web : ip => web.network_interface.0.ip_address
+  }
 }
 
-output "internal_ip_address_vm_2" {
-  value = yandex_compute_instance.web-2.network_interface.0.ip_address
-}
-
-output "external_ip_address_vm_1" {
-  value = yandex_compute_instance.web-1.network_interface.0.nat_ip_address
-}
-
-output "external_ip_address_vm_2" {
-  value = yandex_compute_instance.web-2.network_interface.0.nat_ip_address
+output "external_ip_address_vm" {
+  value = {
+    for ip, web in yandex_compute_instance.web : ip => web.network_interface.0.nat_ip_address
+  }
 }
 
 output "database_fqdn" {

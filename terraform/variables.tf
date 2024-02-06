@@ -63,3 +63,15 @@ variable "ssh_private_key_path" {
 variable "datadog_url" {
   type = string
 }
+
+variable "servers" {
+  type = list(string)
+}
+
+variable "disk-size" {
+  type = string
+}
+
+variable "disk-type" {
+  type = string
+}

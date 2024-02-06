@@ -6,3 +6,6 @@ os_image = "fd8vq2agp2bltpk94ule"
 ssh_key_path         = "../ssh/id_student.pub"
 ssh_private_key_path = "~/.ssh/id/yandex/cloud/id_student"
 datadog_url          = "https://api.datadoghq.eu/"
+servers = ["web-1","web-2"]
+disk-size = "30"
+disk-type = "network-hdd"
