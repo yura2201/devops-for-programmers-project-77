@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    yandex = {
+      version = ">= 0.103"
+      source  = "yandex-cloud/yandex"
+    }
+    datadog = {
+      version = ">= 3.35.0"
+      source  = "DataDog/datadog"
+    }
+  }
+}
+
 # https://cloud.yandex.com/ru/docs/compute/concepts/disk
 resource "yandex_compute_disk" "boot-disk-1" {
   name = "disk-1"

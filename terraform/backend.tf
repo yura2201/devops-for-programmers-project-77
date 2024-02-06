@@ -1,15 +1,4 @@
 terraform {
-  required_providers {
-    yandex = {
-      version = ">= 0.103"
-      source  = "yandex-cloud/yandex"
-    }
-    datadog = {
-      version = ">= 3.35.0"
-      source  = "DataDog/datadog"
-    }
-  }
-
   backend "s3" {
     endpoints = {
       s3 = "https://storage.yandexcloud.net"
